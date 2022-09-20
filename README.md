@@ -1,4 +1,4 @@
-# Dijkstra Algorithm Shortest Path
+# Dijkstra Algorithm - Shortest Path
 This project repository demonstates the implementation of Djikstra Algorithm to find shortest path between two nodes using Go language. The solution of defined problem statement within this project is based on my perspective. You may have different approach to solve this problem.
 
 # Contents
@@ -33,7 +33,11 @@ this function will then returns :<br/>
 ## Input Format
 The first line contains ***t***, the number of orders.
 Each of the order is as follow:
-* The line containes two space-separated integers ***x*** and ***y***, represens the pick up point and destination point respectively.
+* The line containes two space-separated integers ***x*** and ***y***, represents the pick up point and destination point respectively.
+
+The next line, after list of order, contains ***u***, represents the number of weighted edges connection between nodes or vertices. The weight denotes cost or expenses amount needed to use as described on problem statement.
+Each of the edge connection is as follow:
+* The line contains three space-separated integers ***x***, ***y***, and ***z***, the direction of the beginning node to ending node of an edge, and the cost amount needed go through the edge.
 
 
 Sample Input
@@ -53,7 +57,12 @@ Sample Input
 3 2 1000
 ```
 ## Constraints
-![](http://www.sciweavers.org/tex2img.php?eq=%201%20%5Cleq%20t%20%5Cleq%2010&bc=White&fc=Black&im=jpg&fs=12&ff=arev&edit=0)
+<!--
+1 <= t <= 10
+2 <= x <= N
+2 <= y <= N
+1000 <= z <= 10000
+-->
 
 ## Output Format
 The output will be an Array of Integer `optimalRoute`, each number represents locations (defined in routes) to finish this delivery.
