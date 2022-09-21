@@ -61,17 +61,11 @@ func (g *Graph) ShortestPath(startNode, endNode int) []int {
 	return routes
 }
 
-func test_case(orders [][]int, routes [][]int) {
-	// orderLength := len(orders)
-	// routeLength := len(routes)
-
-	// fmt.Println("Order: ", orderLength)
-	// fmt.Println("Route: ", routeLength)
+func test_case(orders [][]int, routes [][]int) []int {
 
 	graph := NewGraph()
 
 	for _, route := range routes {
-		// fmt.Println(route[0])
 		startNode := route[0]
 		endNode := route[1]
 		weight := route[2]
@@ -85,14 +79,39 @@ func test_case(orders [][]int, routes [][]int) {
 	optimalRoute = graph.ShortestPath(initialPosition,initialOrderPick)
 
 	for _, order := range orders {
+		
+		lastDestinationIndex := len(optimalRoute)
+		lastDestinationRoute := optimalRoute[lastDestinationIndex-1]
+
 		pick := order[0]
 		destination := order[1]
+
+		if lastDestinationRoute != pick {
+			route := graph.ShortestPath(lastDestinationRoute, pick)
+
+			transitionRoute := lastDestinationIndex
+
+			if route[0] == optimalRoute[transitionRoute-1] {
+				transitionRoute -= 1
+			}
+
+			optimalRoute = append(optimalRoute[:transitionRoute], route...)
+			lastDestinationIndex = len(optimalRoute)
+		}
+
 		route := graph.ShortestPath(pick, destination)
 
-		optimalRoute = append(optimalRoute[:len(optimalRoute)-1], route...)
+		firstIndex := route[0]
+		newLastIndex := optimalRoute[lastDestinationIndex-1]
+
+		if firstIndex == newLastIndex {
+			lastDestinationIndex -= 1
+		}
+
+		optimalRoute = append(optimalRoute[:lastDestinationIndex], route...)
 	}
 
-	fmt.Println(optimalRoute)
+	return optimalRoute
 }
 
 func main() {
@@ -131,10 +150,8 @@ func main() {
 		routeList[i] = routeCost
 	}
 
-	// fmt.Println(orderList)
-	// fmt.Println(routeList)
-
-	test_case(orderList, routeList)
+	optimalRoutes := test_case(orderList, routeList)
+	fmt.Println(optimalRoutes)
 }
 
 type PriorityQueue struct {
@@ -157,10 +174,6 @@ func (pq *PriorityQueue) Pop() Route {
 	return heap.Pop(pq.Heap).(Route)
 }
 
-// func (pq *PriorityQueue) Routes() []int {
-// 	return pq.Heap[0].Nodes
-// }
-
 type Route struct {
 	Distance int
 	Nodes []int
@@ -170,12 +183,7 @@ type Routes []Route
 
 func (q Routes) Len() int { return len(q) }
 func (q Routes) Less(i,j int) bool {
-	// fmt.Println(q[i])
-	// fmt.Println(q[0])
-	// fmt.Println("Q[i]: ", q[i].Distance)
-	// fmt.Println("Q[j]:", q[j].Distance)
-	// return false
-	// fmt.Println(fmt.Sprintf("Q[%d] Distance: %d <> Q[%d] Distance: %d ", i, q[i].Distance, j, q[j].Distance))
+	// Prioritize route with lowest cost
 	return q[i].Distance < q[j].Distance
 }
 
@@ -184,7 +192,6 @@ func (q Routes) Swap(i,j int) {
 }
 
 func (q *Routes) Push(x interface{}) {
-	// n := len(*q)
 	item := x.(Route)
 	*q = append(*q, item)
 }
@@ -194,6 +201,5 @@ func (q *Routes) Pop() interface{} {
 	n := len(old)
 	item := old[n-1]
 	*q = old[0:n-1]
-	// fmt.Println("Pop: ", item)
 	return item
 }
